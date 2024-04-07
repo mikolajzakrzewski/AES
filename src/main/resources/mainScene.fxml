@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Copyright (c) 2015, 2019, Gluon and/or its affiliates.
+  All rights reserved. Use is subject to license terms.
+
+  This file is available and licensed under the following license:
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions
+  are met:
+
+  - Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+  - Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in
+    the documentation and/or other materials provided with the distribution.
+  - Neither the name of Oracle Corporation nor the names of its
+    contributors may be used to endorse or promote products derived
+    from this software without specific prior written permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="654.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.crypto.Controller">
+  <children>
+    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="627.0" prefWidth="640.0" VBox.vgrow="ALWAYS">
+      <children>
+            <Label layoutX="212.0" layoutY="127.0" text="Szyfrowanie / Deszyfrowanie" textAlignment="CENTER">
+               <font>
+                  <Font size="19.0" />
+               </font>
+            </Label>
+            <Label alignment="CENTER" layoutX="236.0" layoutY="51.0" prefHeight="18.0" prefWidth="192.0" text="Wartość klucza (heksadecymalnie)" />
+            <TextField fx:id="keyTextField" layoutX="242.0" layoutY="70.0" prefHeight="26.0" prefWidth="180.0" text="123456789ABCDEF123456789ABCDEF12" />
+            <Button layoutX="433.0" layoutY="70.0" mnemonicParsing="false" onAction="#generateButtonClick" text="Wygeneruj" />
+            <Label layoutX="308.0" layoutY="14.0" prefHeight="28.0" prefWidth="47.0" text="Klucz" textAlignment="CENTER">
+               <font>
+                  <Font size="19.0" />
+               </font>
+            </Label>
+            <TextArea fx:id="decryptedTextArea" layoutX="42.0" layoutY="173.0" prefHeight="172.0" prefWidth="200.0" />
+            <Label layoutX="110.0" layoutY="155.0" text="Tekst Jawny" />
+            <TextArea fx:id="encryptedTextArea" layoutX="402.0" layoutY="173.0" prefHeight="172.0" prefWidth="200.0" />
+            <Label layoutX="470.0" layoutY="155.0" text="Szyfrogram" />
+            <Button layoutX="286.0" layoutY="208.0" mnemonicParsing="false" onAction="#encryptButtonClick" text="Szyfruj -&gt;" />
+            <Button layoutX="279.0" layoutY="246.0" mnemonicParsing="false" onAction="#decryptButtonClick" text="&lt;- Deszyfruj" />
+            <Label layoutX="182.0" layoutY="354.0" text="Szyfrowanie / Deszyfrowanie z pliku" textAlignment="CENTER">
+               <font>
+                  <Font size="19.0" />
+               </font>
+            </Label>
+            <Button layoutX="74.0" layoutY="392.0" mnemonicParsing="false" onAction="#decodedOutputFileButtonClick" text="Wybierz plik do zapisu" />
+            <Button layoutX="432.0" layoutY="392.0" mnemonicParsing="false" onAction="#encodedOutputFileButtonClick" text="Wybierz plik do zapisu" />
+            <Button layoutX="286.0" layoutY="418.0" mnemonicParsing="false" onAction="#encryptFileButtonClick" text="Szyfruj -&gt;" />
+            <Button layoutX="279.0" layoutY="457.0" mnemonicParsing="false" onAction="#decryptFileButoonClick" text="&lt;- Deszyfruj" />
+            <Label fx:id="chosenOutputDecodedFile" alignment="TOP_LEFT" layoutX="30.0" layoutY="421.0" prefHeight="72.0" prefWidth="223.0" text="Brak wybranego Pliku" textAlignment="CENTER" wrapText="true" />
+            <Label fx:id="chosenOutputEncodedFile" alignment="TOP_LEFT" layoutX="395.0" layoutY="421.0" prefHeight="72.0" prefWidth="223.0" text="Brak wybranego Pliku" textAlignment="CENTER" wrapText="true" />
+            <Button layoutX="74.0" layoutY="509.0" mnemonicParsing="false"  text="Wybierz plik do odczytu" onAction="#decodedInputFileButtonClick"/>
+            <Label fx:id="chosenInputDecodedFile" alignment="TOP_LEFT" layoutX="30.0" layoutY="547.0" prefHeight="72.0" prefWidth="223.0" text="Brak wybranego Pliku" textAlignment="CENTER" wrapText="true" />
+            <Button layoutX="431.0" layoutY="509.0" mnemonicParsing="false"  text="Wybierz plik do odczytu" onAction="#encodedInputFileButtonClick"/>
+            <Label fx:id="chosenInputEncodedFile" alignment="TOP_LEFT" layoutX="390.0" layoutY="547.0" prefHeight="72.0" prefWidth="223.0" text="Brak wybranego Pliku" textAlignment="CENTER" wrapText="true" />
+      </children>
+    </AnchorPane>
+  </children>
+</VBox>
