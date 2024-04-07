@@ -203,17 +203,17 @@ class AESTest {
         String stringIncorrectKey = "this isn't a key";
         byte[] key = stringKey.getBytes();
         byte[] incorrectKey = stringIncorrectKey.getBytes();
-        byte[] message = Files.readAllBytes(Paths.get("imagew.webp"));
+        byte[] message = Files.readAllBytes(Paths.get("testFiles/inputFile.pdf"));
         ArrayList<byte[][]> cypheredMessage = aes.cypherText(message, key);
         byte[] decipheredMessage = aes.decipherText(cypheredMessage, key);
         byte[] incorrectDecipheredMessage = aes.decipherText(cypheredMessage, incorrectKey);
         Assertions.assertArrayEquals(message, decipheredMessage);
         Assertions.assertFalse(Arrays.equals(message, incorrectDecipheredMessage));
-        File outputFile = new File("outputFile.webp");
+        File outputFile = new File("testFiles/outputFile.pdf");
         try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
             outputStream.write(decipheredMessage);
         }
-        File incorrectOutputFile = new File("incorrectOutputFile.webp");
+        File incorrectOutputFile = new File("testFiles/incorrectOutputFile.pdf");
         try (FileOutputStream outputStream = new FileOutputStream(incorrectOutputFile)) {
             outputStream.write(incorrectDecipheredMessage);
         }
