@@ -4,11 +4,21 @@ import java.util.ArrayList;
 
 public class Converter {
 
+    public byte[][] keyToKey2d(byte[] key) {
+        byte[][] key2d = new byte[4][4];
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                key2d[i][j] = key[4 * i + j];
+            }
+        }
+        return key2d;
+    }
+
     public byte[][] bytesToBlock(byte[] bytes1d) {
         byte[][] bytes2d = new byte[4][4];
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                bytes2d[i][j] = bytes1d[4 * i + j];
+                bytes2d[j][i] = bytes1d[4 * i + j];
             }
         }
         return bytes2d;
@@ -18,7 +28,7 @@ public class Converter {
         byte[] bytes1d = new byte[16];
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                bytes1d[4 * i + j] = bytes2d[i][j];
+                bytes1d[4 * i + j] = bytes2d[j][i];
             }
         }
         return bytes1d;
@@ -39,7 +49,7 @@ public class Converter {
             byte[][] block = new byte[4][4];
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 4; j++) {
-                    block[i][j] = text[startingByte + (4 * i + j)];
+                    block[j][i] = text[startingByte + (4 * i + j)];
                 }
             }
             byteText.add(block);

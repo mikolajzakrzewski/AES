@@ -66,7 +66,7 @@ public class AES {
         byte[][] combined = new byte[bytes.length][bytes[0].length];
         for (int i = 0; i < bytes.length; i++) {
             for (int j = 0; j < bytes[0].length; j++) {
-                combined[i][j] = (byte) (bytes[i][j] ^ key[i][j]);
+                combined[i][j] = (byte) (bytes[i][j] ^ key[j][i]);
             }
         }
         return combined;
@@ -179,7 +179,6 @@ public class AES {
     }
 
     public ArrayList<byte[][]> cypherText(byte[] text, byte[] key) {
-        Converter converter = new Converter();
         int paddingBytesNumber = 16 - text.length % 16;
         ArrayList<byte[][]> byteText = new ArrayList<>();
         for (int startingByte = 0; startingByte < text.length; startingByte += 16) {
@@ -187,25 +186,26 @@ public class AES {
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 4; j++) {
                     if (startingByte + (4 * i + j) > text.length - 1) {
-                        block[i][j] = (byte) paddingBytesNumber;
+                        block[j][i] = (byte) paddingBytesNumber;
                     } else {
-                        block[i][j] = text[startingByte + (4 * i + j)];
+                        block[j][i] = text[startingByte + (4 * i + j)];
                     }
                 }
             }
             byteText.add(block);
         }
-        if (paddingBytesNumber == 0) {
+        if (paddingBytesNumber == 16) {
             byte[][] block = new byte[4][4];
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 4; j++) {
-                    block[i][j] = (byte) 16;
+                    block[j][i] = (byte) 16;
                 }
             }
             byteText.add(block);
         }
-        byte[][] byteKey = converter.bytesToBlock(key);
-        ArrayList<byte[][]> keys = this.keyExpansion(byteKey);
+        Converter converter = new Converter();
+        byte[][] key2d = converter.keyToKey2d(key);
+        ArrayList<byte[][]> keys = this.keyExpansion(key2d);
         ArrayList<byte[][]> cypheredText = new ArrayList<>();
         for (byte[][] block : byteText) {
             cypheredText.add(cypherBlock(block, keys));
@@ -231,7 +231,7 @@ public class AES {
     public byte[] decipherText(ArrayList<byte[][]> cypheredText, byte[] key) {
         byte[] decipheredText;
         Converter converter = new Converter();
-        byte[][] key2d = converter.bytesToBlock(key);
+        byte[][] key2d = converter.keyToKey2d(key);
         ArrayList<byte[][]> keys = this.keyExpansion(key2d);
         Collections.reverse(keys);
         ArrayList<byte[]> unpaddedBlocks = new ArrayList<>();
@@ -241,7 +241,7 @@ public class AES {
             byte[] decipheredBlock1d = converter.blockToBytes(decipheredBlock);
             int paddingBytesNumber = 0;
             if (blockNumber == cypheredText.size() - 1) {
-                if (decipheredBlock[3][3] > 0 && decipheredBlock[3][3] < 16) {
+                if (decipheredBlock[3][3] > 0 && decipheredBlock[3][3] < 17) {
                     paddingBytesNumber = decipheredBlock[3][3];
                 }
             }
