@@ -58,7 +58,6 @@ public class Controller {
     }
 
     public void initialize() {
-        // Ustawienie listenera na textProperty
         keyTextField.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -71,10 +70,7 @@ public class Controller {
         });
     }
     public void generateButtonClick(ActionEvent actionEvent) {
-        // Generate a 16-character hexadecimal key
         String key = generateHexKey(32);
-
-        // Set the generated key into the text field
         keyTextField.setText(key);
     }
 
@@ -82,10 +78,8 @@ public class Controller {
         SecureRandom random = new SecureRandom();
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < length; i++) {
-            // Generate random byte
             byte[] bytes = new byte[1];
             random.nextBytes(bytes);
-            // Convert byte to hexadecimal string
             sb.append(String.format("%02X", bytes[0]));
         }
         return sb.toString();
