@@ -234,7 +234,7 @@ public class AES {
         byte[][] key2d = converter.keyToKey2d(key);
         ArrayList<byte[][]> keys = this.keyExpansion(key2d);
         Collections.reverse(keys);
-        ArrayList<byte[]> unpaddedBlocks = new ArrayList<>();
+        ArrayList<byte[]> blocksWithoutPadding = new ArrayList<>();
         for (int blockNumber = 0; blockNumber < cypheredText.size(); blockNumber++) {
             byte[][] block = cypheredText.get(blockNumber);
             byte[][] decipheredBlock = decipherBlock(block, keys);
@@ -245,23 +245,19 @@ public class AES {
                     paddingBytesNumber = decipheredBlock[3][3];
                 }
             }
-            byte[] unpaddedBlock = new byte[decipheredBlock1d.length - paddingBytesNumber];
-            for (int i = 0; i < unpaddedBlock.length; i++) {
-                unpaddedBlock[i] = decipheredBlock1d[i];
-            }
-            unpaddedBlocks.add(unpaddedBlock);
+            byte[] blockWithoutPadding = new byte[decipheredBlock1d.length - paddingBytesNumber];
+            System.arraycopy(decipheredBlock1d, 0, blockWithoutPadding, 0, blockWithoutPadding.length);
+            blocksWithoutPadding.add(blockWithoutPadding);
         }
         int length = 0;
-        for (byte[] block : unpaddedBlocks) {
+        for (byte[] block : blocksWithoutPadding) {
             for (byte ignored : block) {
                 length++;
             }
         }
         decipheredText = new byte[length];
-        for (int i = 0; i < unpaddedBlocks.size(); i++) {
-            for (int j = 0; j < unpaddedBlocks.get(i).length; j++) {
-                decipheredText[i * 16 + j] = unpaddedBlocks.get(i)[j];
-            }
+        for (int i = 0; i < blocksWithoutPadding.size(); i++) {
+            System.arraycopy(blocksWithoutPadding.get(i), 0, decipheredText, i * 16, blocksWithoutPadding.get(i).length);
         }
         return decipheredText;
     }

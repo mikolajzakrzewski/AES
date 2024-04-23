@@ -7,9 +7,7 @@ public class Converter {
     public byte[][] keyToKey2d(byte[] key) {
         byte[][] key2d = new byte[4][4];
         for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
-                key2d[i][j] = key[4 * i + j];
-            }
+            System.arraycopy(key, 4 * i, key2d[i], 0, 4);
         }
         return key2d;
     }
@@ -61,8 +59,8 @@ public class Converter {
         StringBuilder stringText = new StringBuilder();
         for (byte[][] bytes2d : byteText) {
             byte[] bytes1d = this.blockToBytes(bytes2d);
-            for (int i = 0; i < bytes1d.length; i++) {
-                stringText.append(String.format("%02X", bytes1d[i]));
+            for (byte b : bytes1d) {
+                stringText.append(String.format("%02X", b));
             }
         }
         return stringText.toString();

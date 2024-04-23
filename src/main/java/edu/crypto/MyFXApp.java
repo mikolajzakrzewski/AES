@@ -14,16 +14,11 @@ public class MyFXApp extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/mainScene.fxml"));
         Parent root = loader.load();
 
-
-        Controller controller = loader.getController();
         Scene scene = new Scene(root);
-
 
         stage.setScene(scene);
 
-
         stage.setTitle("AES");
-
 
         stage.show();
     }
@@ -31,6 +26,5 @@ public class MyFXApp extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-
 
 }
