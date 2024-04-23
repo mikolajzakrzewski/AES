@@ -1,9 +1,5 @@
 package edu.crypto;
 
-import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
@@ -44,40 +40,34 @@ public class Controller {
     @FXML
     private Label chosenOutputEncodedFile;
 
-    private AES aes = new AES();
-    private Converter converter = new Converter();
+    private final AES aes = new AES();
+
+    private final Converter converter = new Converter();
 
     private File encodedInputFile;
+
     private File decodedInputFile;
 
     private File encodedOutputFile;
+
     private File decodedOutputFile;
 
-    public void close() {
-        Platform.exit();
-    }
-
     public void initialize() {
-        keyTextField.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                // Sprawdzenie czy długość tekstu przekracza 16 znaków
-                if (newValue.length() > 16) {
-                    // Jeśli tak, przycięcie tekstu do 16 znaków
-                    keyTextField.setText(newValue.substring(0, 32));
-                }
+        keyTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.length() > 16) {
+                keyTextField.setText(newValue.substring(0, 32));
             }
         });
     }
-    public void generateButtonClick(ActionEvent actionEvent) {
-        String key = generateHexKey(32);
+    public void generateButtonClick() {
+        String key = generateHexKey();
         keyTextField.setText(key);
     }
 
-    private String generateHexKey(int length) {
+    private String generateHexKey() {
         SecureRandom random = new SecureRandom();
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < 32; i++) {
             byte[] bytes = new byte[1];
             random.nextBytes(bytes);
             sb.append(String.format("%02X", bytes[0]));
@@ -85,75 +75,59 @@ public class Controller {
         return sb.toString();
     }
 
-    public void encryptButtonClick(ActionEvent actionEvent) {
-
+    public void encryptButtonClick() {
         byte[] key = keyTextField.getText().getBytes();
         byte[] byteDecryptedMessage = decryptedTextArea.getText().getBytes();
-
         ArrayList<byte[][]> byteEncryptedMessage = aes.cypherText(byteDecryptedMessage, key);
         String stringEncryptedMessage = converter.byteTextToStringText(byteEncryptedMessage);
         encryptedTextArea.setText(stringEncryptedMessage);
     }
 
-    public void decryptButtonClick(ActionEvent actionEvent) {
+    public void decryptButtonClick() {
         byte[] key = keyTextField.getText().getBytes();
         String stringEncryptedMessage = encryptedTextArea.getText();
         ArrayList<byte[][]> byteEncryptedMessage = converter.stringTextToByteText(stringEncryptedMessage);
-
         byte[] byteDecryptedMessage = aes.decipherText(byteEncryptedMessage,key);
         String decryptedText = new String(byteDecryptedMessage, StandardCharsets.UTF_8);
-
         decryptedTextArea.setText(decryptedText);
     }
 
-    public void encryptFileButtonClick(ActionEvent actionEvent) throws IOException {
-        if(decodedInputFile == null || encodedOutputFile == null){
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Warning");
-            alert.setHeaderText(null);
-            alert.setContentText("Plik nie został wybrany");
-            alert.showAndWait();
+    private void noFileSelectedWarning() {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Warning");
+        alert.setHeaderText(null);
+        alert.setContentText("Plik nie został wybrany");
+        alert.showAndWait();
+    }
+
+    public void encryptFileButtonClick() throws IOException {
+        if (decodedInputFile == null || encodedOutputFile == null) {
+            noFileSelectedWarning();
             return;
-
         }
-
-
         byte[] key = keyTextField.getText().getBytes();
         byte[] message = Files.readAllBytes(Paths.get(decodedInputFile.toURI()));
         ArrayList<byte[][]> cypheredMessage = aes.cypherText(message, key);
         String stringEncryptedMessage = converter.byteTextToStringText(cypheredMessage);
-
         Files.write(encodedOutputFile.toPath(), stringEncryptedMessage.getBytes());
-
-
     }
 
-    public void decryptFileButoonClick(ActionEvent actionEvent) throws IOException {
-        if(encodedInputFile == null || decodedOutputFile == null){
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Warning");
-            alert.setHeaderText(null);
-            alert.setContentText("Plik nie został wybrany");
-            alert.showAndWait();
+    public void decryptFileButtonClick() throws IOException {
+        if (encodedInputFile == null || decodedOutputFile == null) {
+            noFileSelectedWarning();
             return;
-
         }
-
         byte[] key = keyTextField.getText().getBytes();
         String file = new String(Files.readAllBytes(Paths.get(encodedInputFile.toURI())));
-
         ArrayList<byte[][]> byteEncryptedFile = converter.stringTextToByteText(file);
-
         byte[] byteDecryptedFile = aes.decipherText(byteEncryptedFile,key);
         Files.write(decodedOutputFile.toPath(), byteDecryptedFile);
     }
 
-    public void encodedInputFileButtonClick(ActionEvent actionEvent) {
+    public void encodedInputFileButtonClick() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
         fileChooser.setTitle("Wybierz zaszyfrowany plik");
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Text Files (*.txt)", "*.txt");
-        fileChooser.getExtensionFilters().add(extFilter);
         Stage stage = new Stage();
         encodedInputFile = fileChooser.showOpenDialog(stage);
         if(encodedInputFile != null) {
@@ -161,7 +135,7 @@ public class Controller {
         }
     }
 
-    public void decodedInputFileButtonClick(ActionEvent actionEvent) {
+    public void decodedInputFileButtonClick() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
         fileChooser.setTitle("Wybierz jawny plik");
@@ -172,25 +146,23 @@ public class Controller {
         }
     }
 
-    public void decodedOutputFileButtonClick(ActionEvent actionEvent) {
+    private File chooseFile() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
         fileChooser.setTitle("Wybierz plik do zapisu");
         Stage stage = new Stage();
-        decodedOutputFile = fileChooser.showSaveDialog(stage);
+        return fileChooser.showSaveDialog(stage);
+    }
+
+    public void decodedOutputFileButtonClick() {
+        decodedOutputFile = chooseFile();
         if(decodedOutputFile != null) {
             chosenOutputDecodedFile.setText(decodedOutputFile.toString());
         }
     }
 
-    public void encodedOutputFileButtonClick(ActionEvent actionEvent) {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
-        fileChooser.setTitle("Wybierz plik do zapisu");
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(".txt File",".txt");
-        fileChooser.getExtensionFilters().add(extFilter);
-        Stage stage = new Stage();
-        encodedOutputFile = fileChooser.showSaveDialog(stage);
+    public void encodedOutputFileButtonClick() {
+        encodedOutputFile = chooseFile();
         if(encodedOutputFile != null) {
             chosenOutputEncodedFile.setText(encodedOutputFile.toString());
         }
